@@ -31,13 +31,22 @@ import {
 import { useUser } from "@clerk/nextjs";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
+import { useState } from "react";
+import { useGoogleCalendar } from "@/app/google-calendar/addEvent";
+import { Switch } from "./ui/switch";
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useUser();
-  const [title, setTitle] = React.useState("");
-  const [description, setDescription] = React.useState("");
-  const [startTime, setStartTime] = React.useState("");
-  const [endTime, setEndTime] = React.useState("");
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [addToCalendarEnabled, setAddToCalendarEnabled] = useState(false);
+  const {
+    addEventToCalendar,
+    gapiInitialized,
+    error: calendarError,
+  } = useGoogleCalendar();
 
   const handleCreateEvent = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,6 +79,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         hour: "2-digit",
         minute: "2-digit",
       });
+      if (addToCalendarEnabled) {
+        const startDate = new Date(startTime);
+        const eventAdded = await addEventToCalendar(title, startDate);
+        if (!eventAdded) {
+          console.error(
+            "Failed to add event to calendar. Task was created but not added to calendar."
+          );
+        }
+      }
       toast("Event has been created", {
         description: `Starts on ${formattedStartTime}`,
         action: {
@@ -160,6 +178,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     onChange={(e) => setEndTime(e.target.value)}
                     className="col-span-3"
                   />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={addToCalendarEnabled}
+                    onCheckedChange={setAddToCalendarEnabled}
+                    id="add-to-calendar"
+                    disabled={!gapiInitialized}
+                  />
+                  <Label htmlFor="airplane-mode">
+                    {gapiInitialized
+                      ? "Add Task to your calendar"
+                      : "Calendar not initialized"}
+                  </Label>
                 </div>
                 <DialogFooter>
                   <Button type="submit">Add Event</Button>
