@@ -6,6 +6,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
+import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -36,6 +37,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 export default function Page() {
+  const router = useRouter();
   const [events, setEvents] = useState<any[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
@@ -59,14 +61,41 @@ export default function Page() {
   });
 
   const handleCardClick = (event: any) => {
+    console.log("Selected event:", event);
     setSelectedEvent(event);
     setIsDialogOpen(true);
   };
 
-  const handleEditEvent = (e: React.FormEvent) => {
+  const handleEditEvent = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setIsDialogOpen(false);
+    console.log("Editing event:", selectedEvent);
+
+    try {
+      const response = await fetch("/api/editevent", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(selectedEvent),
+      });
+
+      if (response.ok) {
+        const updatedEvent = await response.json();
+        setEvents((prevEvents) =>
+          prevEvents.map((event) =>
+            event.id === updatedEvent.event.id ? updatedEvent.event : event
+          )
+        );
+        setIsDialogOpen(false);
+      } else {
+        console.error("Failed to update event");
+      }
+    } catch (error) {
+      console.error("Error updating event:", error);
+    } finally {
+      router.refresh();
+    }
   };
 
   return (
@@ -224,6 +253,7 @@ export default function Page() {
               />
             </div>
             <DialogFooter>
+              <Button variant="destructive">Delete Event</Button>
               <Button type="submit">Edit Event</Button>
             </DialogFooter>
           </form>
