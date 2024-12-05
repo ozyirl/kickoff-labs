@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   SignedIn,
   SignedOut,
@@ -7,19 +7,9 @@ import {
   UserButton,
   useUser,
 } from "@clerk/nextjs";
-import Link from "next/link";
-import { User } from "@clerk/nextjs/server";
-import { getPosts } from "@/actions/actions";
+
 export default function HomePage() {
   const { user } = useUser();
-  const [posts, setPosts] = useState<any>(null);
-
-  // useEffect(() => {
-  //   fetch("/api/posts")
-  //     .then((res) => res.json())
-  //     .then((data) => setPosts(data.posts))
-  //     .catch(console.error);
-  // }, []);
 
   return (
     <>

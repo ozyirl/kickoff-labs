@@ -1,9 +1,6 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/server/db";
-import { events } from "@/server/db/schema";
-import { sql } from "drizzle-orm";
-import { error } from "console";
 
 export async function GET(req: Request) {
   try {
