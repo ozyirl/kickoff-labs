@@ -15,7 +15,10 @@ export default function HomePage() {
   const [posts, setPosts] = useState<any>(null);
 
   useEffect(() => {
-    getPosts().then(setPosts).catch(console.error);
+    fetch("/api/posts")
+      .then((res) => res.json())
+      .then((data) => setPosts(data.posts))
+      .catch(console.error);
   }, []);
 
   return (
