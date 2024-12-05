@@ -30,7 +30,7 @@ import {
 import { User } from "@clerk/nextjs/server";
 import { useUser } from "@clerk/nextjs";
 import { Button } from "./ui/button";
-
+import { toast } from "sonner";
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useUser();
   const [title, setTitle] = React.useState("");
@@ -62,6 +62,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       setStartTime("");
       setEndTime("");
       setIsDialogOpen(false);
+      const formattedStartTime = new Date(startTime).toLocaleString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      toast("Event has been created", {
+        description: `Starts on ${formattedStartTime}`,
+        action: {
+          label: "Undo",
+          //WIP: UNDO BUTTOn
+          onClick: () => console.log("Undo"),
+        },
+      });
     } catch (error) {
       console.error("Error creating event:", error);
     }
@@ -155,12 +171,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-          <SidebarMenuItem>
-            {/* <SidebarMenuButton>
-              <Plus />
-              <span>New Calendar</span>
-            </SidebarMenuButton> */}
-          </SidebarMenuItem>
+          <SidebarMenuItem>{/* WIP */}</SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
       <SidebarRail />
