@@ -23,9 +23,19 @@ import {
 } from "@/components/ui/card";
 import { ModeToggle } from "@/components/mode-toggle";
 import { useDateStore } from "@/components/date-picker";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export default function Page() {
   const [events, setEvents] = useState<any[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     fetch("/api/getevents")
@@ -44,6 +54,10 @@ export default function Page() {
     month: "long",
     day: "numeric",
   });
+
+  const handleCardClick = () => {
+    setIsDialogOpen(true);
+  };
 
   return (
     <SidebarProvider>
@@ -66,7 +80,7 @@ export default function Page() {
           </div>
         </header>
 
-        <h1 className=" font-semibold text-xl py-4 px-8">Upcoming Events</h1>
+        <h1 className="font-semibold text-xl py-4 px-8">Upcoming Events</h1>
         <div className="flex flex-row flex-wrap gap-4 p-4">
           {events
             .filter((event) => {
@@ -79,7 +93,10 @@ export default function Page() {
                 key={index}
                 className="p-4 rounded flex items-center justify-center max-w-[300px]"
               >
-                <Card>
+                <Card
+                  onClick={handleCardClick}
+                  className="transform transition duration-500 hover:scale-105"
+                >
                   <CardHeader>
                     <CardTitle>{event.title}</CardTitle>
                     <CardDescription>{event.description}</CardDescription>
@@ -115,6 +132,21 @@ export default function Page() {
             ))}
         </div>
       </SidebarInset>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit Event</DialogTitle>
+            <DialogDescription>Make changes to your Event.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4"></div>
+          <DialogFooter>
+            <Button type="submit" onClick={() => setIsDialogOpen(false)}>
+              Save changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SidebarProvider>
   );
 }
