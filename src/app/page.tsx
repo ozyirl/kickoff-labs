@@ -14,12 +14,12 @@ export default function HomePage() {
   const { user } = useUser();
   const [posts, setPosts] = useState<any>(null);
 
-  useEffect(() => {
-    fetch("/api/posts")
-      .then((res) => res.json())
-      .then((data) => setPosts(data.posts))
-      .catch(console.error);
-  }, []);
+  // useEffect(() => {
+  //   fetch("/api/posts")
+  //     .then((res) => res.json())
+  //     .then((data) => setPosts(data.posts))
+  //     .catch(console.error);
+  // }, []);
 
   return (
     <>
@@ -28,7 +28,7 @@ export default function HomePage() {
       </SignedOut>
       <SignedIn>
         <h1 className="flex h-screen flex-row items-center justify-center p-4 text-4xl font-semibold text-white">
-          {posts?.name} {user?.firstName}
+          {user?.firstName}
           <div className="p-2">
             <UserButton />
           </div>
