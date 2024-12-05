@@ -22,15 +22,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ModeToggle } from "@/components/mode-toggle";
+import { useDateStore } from "@/components/date-picker";
 
 export default function Page() {
   const [events, setEvents] = useState<any[]>([]);
-  const formattedDate = new Date().toLocaleString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 
   useEffect(() => {
     fetch("/api/getevents")
@@ -39,8 +34,16 @@ export default function Page() {
       .catch(console.error);
   }, []);
 
-  const today = new Date();
+  const date = useDateStore((state) => state.date);
+  const today = new Date(date || new Date());
   today.setHours(0, 0, 0, 0);
+
+  const formattedDate = today.toLocaleString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   return (
     <SidebarProvider>
