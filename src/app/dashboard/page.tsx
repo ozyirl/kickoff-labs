@@ -21,6 +21,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default function Page() {
   const [events, setEvents] = useState<any[]>([]);
@@ -45,22 +46,24 @@ export default function Page() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbPage>{formattedDate}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+        <header className="sticky top-0 flex h-16 shrink-0 items-center justify-between gap-2 border-b bg-background px-4">
+          <div className="flex items-center">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{formattedDate}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+          <div className="flex items-center ml-auto">
+            <ModeToggle />
+          </div>
         </header>
 
-        <h1 className="text-black font-semibold text-xl py-4 px-8">
-          {" "}
-          Upcoming Events
-        </h1>
+        <h1 className=" font-semibold text-xl py-4 px-8">Upcoming Events</h1>
         <div className="flex flex-row flex-wrap gap-4 p-4">
           {events
             .filter((event) => {
