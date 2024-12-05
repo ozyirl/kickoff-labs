@@ -13,6 +13,14 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function Page() {
   const [events, setEvents] = useState<any[]>([]);
@@ -30,6 +38,9 @@ export default function Page() {
       .catch(console.error);
   }, []);
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -45,18 +56,57 @@ export default function Page() {
             </BreadcrumbList>
           </Breadcrumb>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-5">
-            <h1 className="text-black">Events</h1>
-            {events.map((event, index) => (
-              <div key={index} className="p-4 bg-gray-200 rounded">
-                <h2>{event.title}</h2>
-                <p>{event.description}</p>
-                <p>Start: {new Date(event.startTime).toLocaleString()}</p>
-                <p>End: {new Date(event.endTime).toLocaleString()}</p>
+
+        <h1 className="text-black font-semibold text-xl py-4 px-8">
+          {" "}
+          Upcoming Events
+        </h1>
+        <div className="flex flex-row flex-wrap gap-4 p-4">
+          {events
+            .filter((event) => {
+              const eventDate = new Date(event.startTime);
+              eventDate.setHours(0, 0, 0, 0);
+              return eventDate.getTime() === today.getTime();
+            })
+            .map((event, index) => (
+              <div
+                key={index}
+                className="p-4 rounded flex items-center justify-center max-w-[300px]"
+              >
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{event.title}</CardTitle>
+                    <CardDescription>{event.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p>
+                      Start:{" "}
+                      {new Date(event.startTime).toLocaleString("en-US", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </CardContent>
+                  <CardFooter>
+                    <p>
+                      End:{" "}
+                      {new Date(event.endTime).toLocaleString("en-US", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </CardFooter>
+                </Card>
               </div>
             ))}
-          </div>
         </div>
       </SidebarInset>
     </SidebarProvider>
