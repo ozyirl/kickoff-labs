@@ -98,6 +98,36 @@ export default function Page() {
     }
   };
 
+  const handleDeleteEvent = async () => {
+    if (!selectedEvent?.id) {
+      console.error("No event selected for deletion");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/delete", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: selectedEvent.id }),
+      });
+
+      if (response.ok) {
+        setEvents((prevEvents) =>
+          prevEvents.filter((event) => event.id !== selectedEvent.id)
+        );
+        setIsDialogOpen(false);
+      } else {
+        console.error("Failed to delete event");
+      }
+    } catch (error) {
+      console.error("Error deleting event:", error);
+    } finally {
+      router.refresh();
+    }
+  };
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -253,7 +283,9 @@ export default function Page() {
               />
             </div>
             <DialogFooter>
-              <Button variant="destructive">Delete Event</Button>
+              <Button onClick={handleDeleteEvent} variant="destructive">
+                Delete Event
+              </Button>
               <Button type="submit">Edit Event</Button>
             </DialogFooter>
           </form>
