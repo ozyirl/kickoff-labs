@@ -1,3 +1,4 @@
+"use client";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -11,8 +12,24 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useEffect, useState } from "react";
 
 export default function Page() {
+  const [events, setEvents] = useState<any[]>([]);
+  const formattedDate = new Date().toLocaleString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  useEffect(() => {
+    fetch("/api/getevents")
+      .then((res) => res.json())
+      .then((data) => setEvents(data.events))
+      .catch(console.error);
+  }, []);
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -23,15 +40,21 @@ export default function Page() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbPage>October 2024</BreadcrumbPage>
+                <BreadcrumbPage>{formattedDate}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
           <div className="grid auto-rows-min gap-4 md:grid-cols-5">
-            {Array.from({ length: 20 }).map((_, i) => (
-              <div key={i} className="aspect-square rounded-xl bg-muted/50" />
+            <h1 className="text-black">Events</h1>
+            {events.map((event, index) => (
+              <div key={index} className="p-4 bg-gray-200 rounded">
+                <h2>{event.title}</h2>
+                <p>{event.description}</p>
+                <p>Start: {new Date(event.startTime).toLocaleString()}</p>
+                <p>End: {new Date(event.endTime).toLocaleString()}</p>
+              </div>
             ))}
           </div>
         </div>
