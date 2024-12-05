@@ -188,7 +188,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   />
                   <Label htmlFor="airplane-mode">
                     {gapiInitialized
-                      ? "Add Task to your calendar"
+                      ? "Add Task to your google calendar"
                       : "Calendar not initialized"}
                   </Label>
                 </div>

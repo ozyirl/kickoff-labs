@@ -1,3 +1,5 @@
+press advance when it google hasnt verified this website it will ask for your google calendar permissions as this application is integrated with google oauth for google calendar api
+
 refer env example and setup accordingly
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
