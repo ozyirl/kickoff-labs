@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/server/db";
 import { events } from "@/server/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
+import { auth } from "@clerk/nextjs/server";
 
 export async function PUT(req: NextRequest) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "unauth" }, { status: 401 });
+    }
+
     const { id, title, description, startTime, endTime } = await req.json();
 
     if (!id || !title || !startTime || !endTime) {
@@ -24,12 +30,15 @@ export async function PUT(req: NextRequest) {
         startTime: new Date(startTime),
         endTime: new Date(endTime),
       })
-      .where(eq(events.id, id))
+      .where(and(eq(events.id, id), eq(events.createdBy, userId)))
       .returning();
 
     if (!updatedEvent) {
-      console.error("Event not found with ID:", id);
-      return NextResponse.json({ message: "Event not found" }, { status: 404 });
+      console.error("Event not found or not authorized:", id);
+      return NextResponse.json(
+        { message: "Event not found or not authorized" },
+        { status: 404 }
+      );
     }
 
     console.log("Event updated successfully:", updatedEvent);

@@ -5,7 +5,7 @@ import { events } from "@/server/db/schema";
 
 export async function POST(req: Request) {
   try {
-    const userId = auth();
+    const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "unauth" }, { status: 401 });
     }
@@ -22,6 +22,7 @@ export async function POST(req: Request) {
       description,
       startTime: new Date(startTime),
       endTime: new Date(endTime),
+      createdBy: userId,
     });
 
     return NextResponse.json(
@@ -33,5 +34,9 @@ export async function POST(req: Request) {
     );
   } catch (err) {
     console.log("failed", err);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
