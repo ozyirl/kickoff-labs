@@ -27,7 +27,7 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { User } from "@clerk/nextjs/server";
+
 import { useUser } from "@clerk/nextjs";
 import { Button } from "./ui/button";
 import { toast } from "sonner";

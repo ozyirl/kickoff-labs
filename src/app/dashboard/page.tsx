@@ -32,10 +32,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function Page() {
   const [events, setEvents] = useState<any[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
   useEffect(() => {
     fetch("/api/getevents")
@@ -55,8 +58,15 @@ export default function Page() {
     day: "numeric",
   });
 
-  const handleCardClick = () => {
+  const handleCardClick = (event: any) => {
+    setSelectedEvent(event);
     setIsDialogOpen(true);
+  };
+
+  const handleEditEvent = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setIsDialogOpen(false);
   };
 
   return (
@@ -94,7 +104,7 @@ export default function Page() {
                 className="p-4 rounded flex items-center justify-center max-w-[300px]"
               >
                 <Card
-                  onClick={handleCardClick}
+                  onClick={() => handleCardClick(event)}
                   className="transform transition duration-500 hover:scale-105"
                 >
                   <CardHeader>
@@ -136,15 +146,87 @@ export default function Page() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit Event</DialogTitle>
-            <DialogDescription>Make changes to your Event.</DialogDescription>
+            <DialogTitle>Event Details</DialogTitle>
+            <DialogDescription>Enter your Event details</DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4"></div>
-          <DialogFooter>
-            <Button type="submit" onClick={() => setIsDialogOpen(false)}>
-              Save changes
-            </Button>
-          </DialogFooter>
+          <form onSubmit={handleEditEvent} className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="title" className="text-right">
+                Title
+              </Label>
+              <Input
+                id="title"
+                value={selectedEvent?.title || ""}
+                onChange={(e) =>
+                  setSelectedEvent({ ...selectedEvent, title: e.target.value })
+                }
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="description" className="text-right">
+                Description
+              </Label>
+              <Input
+                id="description"
+                value={selectedEvent?.description || ""}
+                onChange={(e) =>
+                  setSelectedEvent({
+                    ...selectedEvent,
+                    description: e.target.value,
+                  })
+                }
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="startTime" className="text-right">
+                Start Time
+              </Label>
+              <Input
+                id="startTime"
+                type="datetime-local"
+                value={
+                  selectedEvent
+                    ? new Date(selectedEvent.startTime)
+                        .toISOString()
+                        .slice(0, 16)
+                    : ""
+                }
+                onChange={(e) =>
+                  setSelectedEvent({
+                    ...selectedEvent,
+                    startTime: new Date(e.target.value).toISOString(),
+                  })
+                }
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="endTime" className="text-right">
+                End Time
+              </Label>
+              <Input
+                id="endTime"
+                type="datetime-local"
+                value={
+                  selectedEvent
+                    ? new Date(selectedEvent.endTime).toISOString().slice(0, 16)
+                    : ""
+                }
+                onChange={(e) =>
+                  setSelectedEvent({
+                    ...selectedEvent,
+                    endTime: new Date(e.target.value).toISOString(),
+                  })
+                }
+                className="col-span-3"
+              />
+            </div>
+            <DialogFooter>
+              <Button type="submit">Edit Event</Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </SidebarProvider>
